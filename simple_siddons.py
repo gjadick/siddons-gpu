@@ -1,6 +1,6 @@
 import numpy as np
 
-EPS = 1e-2
+EPS = 1e-8
 
 def siddons(src, trg, N, dR):
     '''
@@ -132,12 +132,12 @@ def siddons(src, trg, N, dR):
         il[m] = (x1 + 0.5*(alphas[m]+alphas[m+1])*dx - coord_plane_1)/dR
         jl[m] = (y1 + 0.5*(alphas[m]+alphas[m+1])*dy - coord_plane_1)/dR
 
+        
+    # do some post processing.
+    # 1. In case there are any l=0, remove those values 
+    # 2. Get rid of indices larger than N
+    l, il, jl = l[l>EPS], il[l>EPS], jl[l>EPS]
+    l, il, jl = l[il<N], il[il<N], jl[il<N]
+    l, il, jl = l[jl<N], il[jl<N], jl[jl<N]
+    
     return np.array([l, il, jl])
-
-
-def remove_zeros(l, il, jl):
-    '''
-    A post-processing function for Siddons outputs.
-    In case there are any zeros, remove those values from the l/il/jl arrays.
-    '''
-    return np.array([l[l>EPS], il[l>EPS], jl[l>EPS]])
