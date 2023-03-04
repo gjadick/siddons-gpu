@@ -1,6 +1,6 @@
 import numpy as np
 
-def siddons(src, trg):
+def siddons(src, trg, N, dR):
     '''
     An implementation of Siddons raytracing, for a simple case.
     Assume 2D matrix, src & trg are outside of matrix.
@@ -19,8 +19,8 @@ def siddons(src, trg):
     eps = 1e-12 # for checking floating points against zero.
     
     # take x, y of src and trg
-    x1, y1 = src
-    x2, y2 = trg
+    x1, y1 = src[0], src[1]
+    x2, y2 = trg[0], trg[1]
     
     # number of planes in x and y directions
     Nx = N+1
