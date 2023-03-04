@@ -1,5 +1,7 @@
 import numpy as np
 
+EPS = 1e-2
+
 def siddons(src, trg, N, dR):
     '''
     An implementation of Siddons raytracing, for a simple case.
@@ -16,7 +18,6 @@ def siddons(src, trg, N, dR):
         dR :
             size of pixels in the matrix. (assume isotropic)
     '''
-    eps = 1e-12 # for checking floating points against zero.
     
     # take x, y of src and trg
     x1, y1 = src[0], src[1]
@@ -31,10 +32,10 @@ def siddons(src, trg, N, dR):
     dy = y2 - y1
 
     #check for 0 distances
-    if np.abs(dx) < eps:
-        dx = eps
-    if np.abs(dy) < eps:
-        dy = eps
+    if np.abs(dx) < EPS:
+        dx = EPS
+    if np.abs(dy) < EPS:
+        dy = EPS
 
     coord_plane_1 = -N*dR//2
 
@@ -67,14 +68,14 @@ def siddons(src, trg, N, dR):
         j_max = 1 + (y1 + a_min*dy - coord_plane_1)/dR
 
     # round up/down for min/max, if not integer.
-    if np.abs(j_min - np.round(j_min)) > eps:
+    if np.abs(j_min - np.round(j_min)) > EPS:
         j_min = np.ceil(j_min)
-    if np.abs(j_max - np.round(j_max)) > eps:
+    if np.abs(j_max - np.round(j_max)) > EPS:
         j_max = np.floor(j_max)
 
-    if np.abs(i_min - np.round(i_min)) > eps:
+    if np.abs(i_min - np.round(i_min)) > EPS:
         i_min = np.ceil(i_min)
-    if np.abs(i_max - np.round(i_max)) > eps:
+    if np.abs(i_max - np.round(i_max)) > EPS:
         i_max = np.floor(i_max)
 
     # cast as integers
@@ -132,3 +133,11 @@ def siddons(src, trg, N, dR):
         jl[m] = (y1 + 0.5*(alphas[m]+alphas[m+1])*dy - coord_plane_1)/dR
 
     return np.array([l, il, jl])
+
+
+def remove_zeros(l, il, jl):
+    '''
+    A post-processing function for Siddons outputs.
+    In case there are any zeros, remove those values from the l/il/jl arrays.
+    '''
+    return np.array([l[l>EPS], il[l>EPS], jl[l>EPS]])
